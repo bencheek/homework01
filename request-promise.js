@@ -1,22 +1,22 @@
-'use strict'
+"use strict"
 
-const requestPromise = require('request-promise');
+const requestPromise = require("request-promise");
 
-requestPromise('http://swapi.co/api/people/1')
+requestPromise({url: "http://swapi.co/api/people/1", json: true})
 .then(lukeResponseBody => {
 
-    const vehiclePromises = JSON.parse(lukeResponseBody).vehicles.map(requestPromise)
+    const vehiclePromises = lukeResponseBody.vehicles.map(vehicleUrl => requestPromise({url : vehicleUrl, json: true}))
 
     Promise.all(vehiclePromises)
     .then(vehicleResponseBodies => {
-
-        vehicleResponseBodies.map(vehicleResponseBody => JSON.parse(vehicleResponseBody).name)
+        
+        vehicleResponseBodies.map(vehicleResponseBody => vehicleResponseBody.name)
         .forEach(vehicleName => console.log(vehicleName))
     
     }).catch(error => { 
-        console.log(`Exception while getting Luke's vehicles ${error}`)
+        console.error(`Exception while getting Luke's vehicles ${error.message}`)
     })
 
 }).catch(error => {
-    console.log(`Exception while getting Luke's details ${error}`);
+    console.error(`Exception while getting Luke's details ${error.message}`);
 })
