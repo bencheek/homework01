@@ -2,13 +2,13 @@
 
 const requestPromise = require("request-promise");
 
-async function run() {
+async function logVehicleNamesForPersonId(personId) {
     
-    const lukesDetailBody = await requestPromise({url: "http://swapi.co/api/people/1", json: true})
-    const vehiclePromises = lukesDetailBody.vehicles.map(vehicleUrl => requestPromise({url: vehicleUrl, json: true}))
+    const personDetailBody = await requestPromise({url: "http://swapi.co/api/people/".concat(personId), json: true})
+    const vehiclePromises = personDetailBody.vehicles.map(vehicleUrl => requestPromise({url: vehicleUrl, json: true}))
     const vehiclesDetail = await Promise.all(vehiclePromises)
 
-    vehiclesDetail.map(vehicle => vehicle.name).forEach(vehicleName => console.log(vehicleName))
+    vehiclesDetail.forEach(vehicle => console.log(vehicle.name))
 }
 
-run().catch(error => console.error(`Incorrect status while getting data : ${error.message}`))
+logVehicleNamesForPersonId(1).catch(error => console.error(`Incorrect status while getting data : ${error.message}`))
